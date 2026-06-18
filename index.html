@@ -3,97 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acessando grupo de ofertas...</title>
+  <title>PRS — Grupo de Ofertas de Som</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --red:   #dc2626;
+      --green: #25D366;
+      --bg:    #050505;
+    }
+
+    html, body { height: 100%; }
+
     body {
-      font-family: -apple-system, 'Inter', sans-serif;
-      background: #050505; color: #f5f5f5;
-      min-height: 100vh;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg); color: #f5f5f5;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 32px; padding: 24px;
-      text-align: center;
+      min-height: 100vh; padding: 32px 20px;
+      text-align: center; overflow: hidden;
     }
 
-    .logo {
-      font-size: 22px; font-weight: 900; letter-spacing: -.5px;
-      color: #f5f5f5;
+    /* aurora */
+    .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; will-change: transform; transform: translateZ(0); }
+    .b1 {
+      position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(220,38,38,.22), transparent 65%);
+      top: -20%; left: -15%;
+      animation: d1 18s ease-in-out infinite;
     }
-    .logo em { color: #dc2626; font-style: normal; }
+    .b2 {
+      position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(37,211,102,.18), transparent 65%);
+      bottom: -10%; right: -15%;
+      animation: d2 24s ease-in-out infinite;
+    }
+    @keyframes d1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(6vw,5vh)} }
+    @keyframes d2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-5vw,-4vh)} }
 
-    .spinner-wrap {
-      position: relative; width: 72px; height: 72px;
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
-    .spinner {
-      width: 72px; height: 72px;
-      border: 3px solid rgba(255,255,255,.08);
-      border-top-color: #25D366;
-      border-radius: 50%;
-      animation: spin .9s linear infinite;
-    }
-    .spinner-ico {
-      position: absolute; inset: 0;
+
+    /* conteúdo */
+    .wrap { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 28px; max-width: 340px; width: 100%; }
+
+    .logo { font-size: 24px; font-weight: 900; letter-spacing: -.5px; }
+    .logo em { color: var(--red); font-style: normal; }
+
+    /* ícone WA pulsando */
+    .wa-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
       display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
+      box-shadow: 0 0 0 0 rgba(37,211,102,.5);
+      animation: pulse 2s ease-in-out infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .msg {
-      font-size: 17px; font-weight: 700; letter-spacing: -.3px;
-    }
-    .sub {
-      font-size: 13px; color: #666; margin-top: 6px; line-height: 1.6;
-    }
-
-    .manual {
-      font-size: 12px; color: #444; margin-top: 8px;
-    }
-    .manual a {
-      color: #25D366; text-decoration: none; font-weight: 600;
+    .wa-icon svg { width: 42px; height: 42px; fill: #fff; }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0   rgba(37,211,102,.5); }
+      70%  { box-shadow: 0 0 0 22px rgba(37,211,102,.0); }
+      100% { box-shadow: 0 0 0 0   rgba(37,211,102,.0); }
     }
 
+    .text-block { display: flex; flex-direction: column; gap: 8px; }
+    .title { font-size: 22px; font-weight: 900; letter-spacing: -.5px; line-height: 1.2; }
+    .sub   { font-size: 14px; color: #777; line-height: 1.6; }
+
+    /* barra de progresso */
     .bar-wrap {
-      width: 180px; height: 3px;
-      background: rgba(255,255,255,.08); border-radius: 99px;
-      overflow: hidden;
+      width: 100%; height: 4px;
+      background: rgba(255,255,255,.07); border-radius: 99px; overflow: hidden;
     }
     .bar {
-      height: 100%; width: 0%; background: #25D366; border-radius: 99px;
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      border-radius: 99px;
       transition: width linear;
     }
+
+    /* botão fallback */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: linear-gradient(135deg, #22c55e, #16a34a 60%, #15803d);
+      border: 1px solid rgba(255,255,255,.15);
+      color: #fff; font-size: 16px; font-weight: 800; letter-spacing: -.2px;
+      text-decoration: none; border-radius: 16px;
+      padding: 16px 28px; width: 100%;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity .4s ease, transform .4s ease;
+      box-shadow: 0 4px 28px rgba(37,211,102,.35);
+    }
+    .btn.show { opacity: 1; transform: translateY(0); }
+
+    .micro { font-size: 11px; color: #3a3a3a; }
+    .micro em { font-style: normal; color: #25D366; }
   </style>
 </head>
 <body>
 
+<div class="aurora" aria-hidden="true">
+  <div class="b1"></div>
+  <div class="b2"></div>
+</div>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<div class="wrap">
+
   <div class="logo">PRS<em>.</em></div>
 
-  <div class="spinner-wrap">
-    <div class="spinner"></div>
-    <div class="spinner-ico">📲</div>
+  <div class="wa-icon">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.845L.057 23.882l6.197-1.624A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 01-4.988-1.362l-.358-.213-3.68.965.982-3.58-.234-.369A9.79 9.79 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
   </div>
 
-  <div>
-    <p class="msg">Abrindo o grupo de ofertas...</p>
-    <p class="sub">Você será redirecionado em instantes.<br>É grátis, sem cadastro.</p>
+  <div class="text-block">
+    <p class="title">Entrando no grupo<br>de ofertas de som 🔊</p>
+    <p class="sub">Cupons de Taramps, Bomber, Stetsom<br>todo dia direto no seu WhatsApp. Grátis.</p>
   </div>
 
   <div class="bar-wrap">
     <div class="bar" id="bar"></div>
   </div>
 
-  <p class="manual">Não redirecionou? <a href="https://chat.whatsapp.com/LbEBkss5MLX5VOy8vmSiCW" id="link">Clique aqui</a></p>
+  <a href="https://chat.whatsapp.com/LbEBkss5MLX5VOy8vmSiCW" class="btn" id="btn" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.524 5.845L.057 23.882l6.197-1.624A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 01-4.988-1.362l-.358-.213-3.68.965.982-3.58-.234-.369A9.79 9.79 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+    Entrar no grupo agora
+  </a>
 
-  <script>
-    const DEST = 'https://chat.whatsapp.com/LbEBkss5MLX5VOy8vmSiCW';
-    const DELAY = 2500;
+  <p class="micro"><em>✓</em> grátis &nbsp;·&nbsp; <em>✓</em> sem spam &nbsp;·&nbsp; <em>✓</em> sair quando quiser</p>
 
-    const bar = document.getElementById('bar');
-    bar.style.transitionDuration = DELAY + 'ms';
-    requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = '100%'; }));
+</div>
 
-    setTimeout(() => { window.location.href = DEST; }, DELAY);
-  </script>
+<script>
+  const DEST  = 'https://chat.whatsapp.com/LbEBkss5MLX5VOy8vmSiCW';
+  const DELAY = 2500;
+
+  const bar = document.getElementById('bar');
+  const btn = document.getElementById('btn');
+
+  bar.style.transitionDuration = DELAY + 'ms';
+  requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = '100%'; }));
+
+  setTimeout(() => {
+    btn.classList.add('show');
+    window.location.href = DEST;
+  }, DELAY);
+</script>
 </body>
 </html>
